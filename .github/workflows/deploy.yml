@@ -21,6 +21,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Get version
+        id: version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
       - name: Build
         run: npm run build
 
@@ -31,9 +35,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Upload to S3
+      - name: Upload versioned build to S3
         run: |
-          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} --delete
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }}/v${{ steps.version.outputs.VERSION }} --delete
+
+      - name: Upload latest build to S3
+        run: |
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }}/latest --delete
 
       - name: Invalidate CloudFront cache
         run: |
