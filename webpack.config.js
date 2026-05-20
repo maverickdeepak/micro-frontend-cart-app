@@ -47,7 +47,7 @@ module.exports = {
       name: "cartApp",
       filename: "remoteEntry.js",
       exposes: {
-        "./CartPage": "./src/CartPage.jsx",
+        "./ShoppingCart": "./src/CartPage.jsx",
       },
       shared: {
         react: {
